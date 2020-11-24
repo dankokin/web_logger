@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/web_logger/models"
-	"github.com/web_logger/services"
-	"github.com/web_logger/utils"
+	"github.com/dankokin/web_logger/models"
+	"github.com/dankokin/web_logger/services"
+	"github.com/dankokin/web_logger/utils"
 )
 
 type DataStoreEnvironment struct {

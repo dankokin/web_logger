@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/web_logger/models"
+	"github.com/dankokin/web_logger/models"
 )
 
 type DataStore interface {

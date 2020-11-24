@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/web_logger/models"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 
-	"github.com/web_logger/handlers"
-	"github.com/web_logger/services"
+	"github.com/dankokin/web_logger/handlers"
+	"github.com/dankokin/web_logger/models"
+	"github.com/dankokin/web_logger/services"
 )
 
 var (

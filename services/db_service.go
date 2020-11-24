@@ -3,7 +3,8 @@ package services
 import (
 	"database/sql"
 	"fmt"
-	"github.com/web_logger/models"
+
+	"github.com/dankokin/web_logger/models"
 
 	_ "github.com/lib/pq"
 )
