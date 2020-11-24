@@ -1,20 +1,19 @@
 package models
 
 import (
-	"gopkg.in/yaml.v3"
-	"os"
+	"encoding/json"
+	"io/ioutil"
 )
 
-func (cfg *Config) LoadFromYaml(file string) {
-	f, err := os.Open(file)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
+func InitConfigFile(cnfFile string) Config {
+	jsonFile, err := ioutil.ReadFile(cnfFile)
 
-	decoder := yaml.NewDecoder(f)
-	err = decoder.Decode(cfg)
-	if err != nil {
+	var cnf Config
+	jerr := json.Unmarshal(jsonFile, &cnf)
+
+	if err != nil || jerr != nil {
 		panic(err)
 	}
+
+	return cnf
 }
