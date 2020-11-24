@@ -10,20 +10,20 @@ import (
 type DataStore interface {
 	// Function that gets all logs from database by filters
 	GetAllLogs(map[string]interface{}) ([]models.WAFMessage, error)
+
+	// Simple function that saves WAFMessage to database
+	SaveMessage(models.WAFMessage) error
 }
 
 func (db *DB)GetAllLogs(filters map[string]interface{}) ([]models.WAFMessage, error) {
 	queryBuilder := strings.Builder{}
-	queryBuilder.WriteString("SELECT \"registered_at\", \"message\", \"target\" FROM public.\"Messages\" where \"registred_at\" = $1")
+	queryBuilder.WriteString("SELECT \"registered_at\", \"message\", \"target\" FROM public.\"Messages\" where \"registred_at\" >= $1")
 
 	args := make([]interface{}, 0, 2)
 
-	var beginInterval time.Time
-	if interval, exists := filters["interval"]; exists {
-		beginInterval = time.Now().Add(interval.(time.Duration) * -1)
-	} else {
-		beginInterval = time.Now().Add(time.Hour * 24 * -1)
-	}
+	interval := filters["interval"]
+	beginInterval := time.Now().Add(-24 * time.Hour * time.Duration(interval.(int)))
+
 	args = append(args, beginInterval)
 
 	if target, exists := filters["target"]; exists {
@@ -52,4 +52,13 @@ func (db *DB)GetAllLogs(filters map[string]interface{}) ([]models.WAFMessage, er
 	}
 
 	return messages, nil
+}
+
+func (db *DB)SaveMessage(message models.WAFMessage) error {
+	_, err := db.Exec("INSERT INTO public.\"Messages\" \"registered_at\", \"message\", \"target\" VALUES ($1, $2, $3)",
+		message.Message,
+		message.RegisteredAt,
+		message.Target)
+
+	return err
 }
