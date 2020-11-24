@@ -1,11 +1,69 @@
 package handlers
 
-import "net/http"
+import (
+	"encoding/json"
+	"github.com/web_logger/models"
+	"github.com/web_logger/utils"
+	"net/http"
+	"strconv"
+
+	"github.com/web_logger/services"
+)
+
+type DataStoreEnvironment struct {
+	Db services.DataStore
+}
 
 // Function gets all logs from database by target name which were received during the 1 day in default case
 // or in the interval specified by the user and returns them in JSON-format
 // params: interval, target;
 // default: interval = 1 day, target = all
-func GetLogs(w http.ResponseWriter, r *http.Request) {
+func (env *DataStoreEnvironment) GetLogs(w http.ResponseWriter, r *http.Request) {
+	args := make(map[string]interface{}, 2)
+	interval := r.URL.Query().Get("interval")
+	if interval != "" {
+		if err := utils.CheckInterval(interval); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		args["interval"], _ = strconv.Atoi(interval)
+	} else {
+		args["interval"] = 1
+	}
 
+	target := r.URL.Query().Get("target")
+	if target != "" {
+		if err := utils.CheckTarget(target); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		args["target"] = target
+	}
+
+	logs, err := env.Db.GetAllLogs(args)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(logs)
+	w.WriteHeader(http.StatusOK)
+}
+
+// Simple handler which contain message from waf to database
+func (env *DataStoreEnvironment) SaveLog(w http.ResponseWriter, r *http.Request) {
+	var log models.WAFMessage
+	err := json.NewDecoder(r.Body).Decode(&log)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = env.Db.SaveMessage(log)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
