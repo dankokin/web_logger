@@ -2,12 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/web_logger/models"
-	"github.com/web_logger/utils"
 	"net/http"
 	"strconv"
 
+	"github.com/web_logger/models"
 	"github.com/web_logger/services"
+	"github.com/web_logger/utils"
 )
 
 type DataStoreEnvironment struct {
