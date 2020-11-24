@@ -1,0 +1,19 @@
+version: "3"
+services:
+  db:
+    image: postgres
+    container_name: logger_postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: daniel
+      POSTGRES_DB: loggerdb
+      POSTGRES_PASSWORD: 1q2w3e
+  logger:
+    depends_on:
+      - db
+    build: .
+    restart: always
+    ports:
+      - 5050:5050
