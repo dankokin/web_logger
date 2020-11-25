@@ -1,16 +1,30 @@
 FROM golang
 
-RUN go get -x github.com/dankokin/web_logger
-WORKDIR /go/src/github.com/dankokin/web_logger
-RUN make
+RUN apt-get -y update
+RUN apt-get install -y tree wget curl
 
-RUN sed -i 's,POSTGRES_PASSWORD,1q2w3e,g' appsettings.live.json && \
-    sed -i 's,POSTGRES_HOST,logger_postgres,g' appsettings.live.json && \
-    sed -i 's,POSTGRES_USER,daniel,g' appsettings.live.json && \
-    sed -i 's,POSTGRES_DB,loggerdb,g' appsettings.live.json
+RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
+RUN mkdir go && mkdir go/src && mkdir go/bin && mkdir go/pkg
 
-WORKDIR /go/src/github.com/dankokin/web_logger/workdir
-CMD ["./web_logger"]
+ENV GOPATH $HOME/go
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+
+USER root
+
+WORKDIR $GOPATH/src/github.com/dankokin/web_logger
+ADD ./ $GOPATH/src/github.com/dankokin/web_logger
+
+RUN tree -L 4 ./
+
+RUN sed -i 's,POSTGRES_PASSWORD,1q2w3e,g' appsettings.json && \
+    sed -i 's,POSTGRES_HOST,logger_postgres,g' appsettings.json && \
+    sed -i 's,POSTGRES_USER,daniel,g' appsettings.json && \
+    sed -i 's,POSTGRES_DB,loggerdb,g' appsettings.json
+
+RUN chmod +x ./scripts/*
+RUN ./scripts/build.sh
+
+CMD ["./server.app"]
 
 EXPOSE 5050
