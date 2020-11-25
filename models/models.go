@@ -8,11 +8,17 @@ type Config struct {
 }
 
 type WAFMessage struct {
-	RegisteredAt time.Time `json:"registered_at"`
-	Message      string    `json:"message"`
-	Target       string    `json:"target"`
+	TargetDomain              string    `json:"target"`
+	RequestURI                string    `json:"request_uri"`
+	StatusCode                int       `json:"status_code"`
+	RequestRulesCheckElapsed  int64     `json:"request_rules_check_elapsed"`
+	ResponseRulesCheckElapsed int64     `json:"response_rules_check_elapsed"`
+	HTTPElapsed               int64     `json:"http_elapsed"`
+	RequestSize               int64     `json:"request_size"`
+	ResponseSize              int64     `json:"response_size"`
+	RegisteredAt              time.Time
 }
 
 type ServerResponse struct {
-	Logs     []WAFMessage `json:"logs"`
+	Logs []WAFMessage `json:"logs"`
 }
