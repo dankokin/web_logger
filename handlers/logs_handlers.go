@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/dankokin/web_logger/models"
 	"github.com/dankokin/web_logger/services"
@@ -47,11 +48,11 @@ func (env *DataStoreEnvironment) GetLogs(w http.ResponseWriter, r *http.Request)
 	}
 
 	json.NewEncoder(w).Encode(logs)
-	w.WriteHeader(http.StatusOK)
 }
 
 // Simple handler which contain message from waf to database
 func (env *DataStoreEnvironment) SaveLog(w http.ResponseWriter, r *http.Request) {
+	// TODO: Log's fields validation
 	var log models.WAFMessage
 	err := json.NewDecoder(r.Body).Decode(&log)
 	if err != nil {
@@ -59,6 +60,7 @@ func (env *DataStoreEnvironment) SaveLog(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	log.RegisteredAt = time.Now()
 	err = env.Db.SaveMessage(log)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

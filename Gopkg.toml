@@ -1,0 +1,15 @@
+[[constraint]]
+  name = "github.com/go-ozzo/ozzo-validation"
+  version = "3.6.0"
+
+[[constraint]]
+  name = "github.com/gorilla/mux"
+  version = "1.8.0"
+
+[[constraint]]
+  name = "github.com/lib/pq"
+  version = "1.8.0"
+
+[prune]
+  go-tests = true
+  unused-packages = true

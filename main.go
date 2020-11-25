@@ -14,14 +14,18 @@ import (
 
 var (
 	pathToConfig = "appsettings.json"
+	pathToScheme = "./database/init.sql"
 )
 
 func main() {
 	conf := models.InitConfigFile(pathToConfig)
+	fmt.Println(conf)
 	db, err := services.NewDB(conf)
 	if err != nil {
 		panic(err)
 	}
+
+	services.Setup(pathToScheme, db)
 	fmt.Println("Database is ready!")
 
 	env := handlers.DataStoreEnvironment{
