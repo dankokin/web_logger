@@ -3,9 +3,11 @@ package services
 import (
 	"database/sql"
 	"fmt"
-	"github.com/web_logger/models"
+	"os"
 
 	_ "github.com/lib/pq"
+
+	"github.com/dankokin/web_logger/models"
 )
 
 // structure for functions that access the database
@@ -24,4 +26,32 @@ func NewDB(conf models.Config) (*DB, error) {
 	}
 	fmt.Println("Successfully connected!")
 	return &DB{db}, nil
+}
+
+func Setup(filename string, db *DB) {
+	file, err := os.Open(filename)
+	if err != nil {
+		fmt.Println("Setupfile opening error: ", err)
+		return
+	}
+	defer file.Close()
+
+	stat, err := file.Stat()
+	if err != nil {
+		fmt.Println("Error after opening setupfile: ", err)
+		return
+	}
+
+	bs := make([]byte, stat.Size())
+	_, err = file.Read(bs)
+	if err != nil {
+		fmt.Println("Error after opening setupfile: ", err)
+		panic(err)
+	}
+
+	command := string(bs)
+	_, err = db.Exec(command)
+	if err != nil {
+		fmt.Println("Command error")
+	}
 }

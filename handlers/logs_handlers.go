@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
-	"github.com/web_logger/models"
-	"github.com/web_logger/services"
-	"github.com/web_logger/utils"
+	"github.com/dankokin/web_logger/models"
+	"github.com/dankokin/web_logger/services"
+	"github.com/dankokin/web_logger/utils"
 )
 
 type DataStoreEnvironment struct {
@@ -47,7 +48,6 @@ func (env *DataStoreEnvironment) GetLogs(w http.ResponseWriter, r *http.Request)
 	}
 
 	json.NewEncoder(w).Encode(logs)
-	w.WriteHeader(http.StatusOK)
 }
 
 // Simple handler which contain message from waf to database
@@ -55,6 +55,8 @@ func (env *DataStoreEnvironment) SaveLog(w http.ResponseWriter, r *http.Request)
 	var log models.WAFMessage
 	err := json.NewDecoder(r.Body).Decode(&log)
 	if err != nil {
+		fmt.Println(r.Body)
+		fmt.Println(log)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
