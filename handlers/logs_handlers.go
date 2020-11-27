@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -54,6 +55,7 @@ func (env *DataStoreEnvironment) GetLogs(w http.ResponseWriter, r *http.Request)
 func (env *DataStoreEnvironment) SaveLog(w http.ResponseWriter, r *http.Request) {
 	var log models.WAFMessage
 	err := json.NewDecoder(r.Body).Decode(&log)
+	fmt.Println(log)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -61,6 +63,7 @@ func (env *DataStoreEnvironment) SaveLog(w http.ResponseWriter, r *http.Request)
 
 	err = log.Validate()
 	if err != nil {
+		fmt.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

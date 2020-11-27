@@ -26,13 +26,7 @@ type WAFMessage struct {
 func (msg WAFMessage) Validate() error {
 	return validation.ValidateStruct(&msg,
 		validation.Field(&msg.TargetDomain, is.URL),
-		validation.Field(&msg.RequestURI, is.RequestURI),
-		validation.Field(&msg.StatusCode, is.Int),
-		validation.Field(&msg.RequestRulesCheckElapsed, is.Int),
-		validation.Field(&msg.ResponseRulesCheckElapsed, is.Int),
-		validation.Field(&msg.HTTPElapsed, is.Int),
-		validation.Field(&msg.RequestSize, is.Int),
-		validation.Field(&msg.ResponseSize, is.Int))
+		validation.Field(&msg.RequestURI, is.RequestURI))
 }
 
 type ServerResponse struct {
