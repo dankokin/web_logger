@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
+	"time"
+)
 
 type Config struct {
 	ConnectionString string `json:"connection_string"`
@@ -17,6 +21,18 @@ type WAFMessage struct {
 	RequestSize               int64     `json:"request_size"`
 	ResponseSize              int64     `json:"response_size"`
 	RegisteredAt              time.Time
+}
+
+func (msg WAFMessage) Validate() error {
+	return validation.ValidateStruct(&msg,
+		validation.Field(&msg.TargetDomain, is.URL),
+		validation.Field(&msg.RequestURI, is.RequestURI),
+		validation.Field(&msg.StatusCode, is.Int),
+		validation.Field(&msg.RequestRulesCheckElapsed, is.Int),
+		validation.Field(&msg.ResponseRulesCheckElapsed, is.Int),
+		validation.Field(&msg.HTTPElapsed, is.Int),
+		validation.Field(&msg.RequestSize, is.Int),
+		validation.Field(&msg.ResponseSize, is.Int))
 }
 
 type ServerResponse struct {
