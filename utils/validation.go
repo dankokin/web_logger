@@ -12,3 +12,4 @@ func CheckTarget(url interface{}) error {
 func CheckInterval(day interface{}) error {
 	return validation.Validate(day, is.Int)
 }
+

@@ -52,9 +52,14 @@ func (env *DataStoreEnvironment) GetLogs(w http.ResponseWriter, r *http.Request)
 
 // Simple handler which contain message from waf to database
 func (env *DataStoreEnvironment) SaveLog(w http.ResponseWriter, r *http.Request) {
-	// TODO: Log's fields validation
 	var log models.WAFMessage
 	err := json.NewDecoder(r.Body).Decode(&log)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = log.Validate()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
